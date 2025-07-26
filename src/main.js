@@ -1,6 +1,6 @@
 // src/main.js
 import "./styles.css";
-import { initDrag } from "./drag.js";
+import { listen } from '@tauri-apps/api/event';
 
 console.log("Main.js loading...");
 
@@ -46,9 +46,51 @@ function initUI() {
     console.error("Could not find clear button");
   }
 
-  // Initialize drag functionality after DOM setup
-  initDrag(stageFiles);
+  // Use Tauri's native file drop events
+  setupTauriFileDrop();
   console.log("UI initialization complete");
+}
+
+// Setup Tauri's native file drop events
+async function setupTauriFileDrop() {
+  try {
+    console.log("Setting up Tauri file drop listener...");
+    
+    // Listen for file drop events
+    await listen('tauri://file-drop', (event) => {
+      console.log("Tauri file drop event:", event);
+      const paths = event.payload;
+      if (paths && paths.length > 0) {
+        stageFiles(paths);
+      }
+    });
+
+    // Also keep the web-based drag and drop as fallback
+    window.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    });
+    
+    window.addEventListener('drop', e => {
+      e.preventDefault();
+      console.log("Web drop event triggered");
+      
+      const files = [...e.dataTransfer.files];
+      console.log("Files dropped:", files);
+      
+      if(files.length) {
+        // Try to get file paths from the web API
+        const paths = files.map(f => f.path || f.webkitRelativePath || f.name);
+        console.log("File paths:", paths);
+        stageFiles(paths);
+      }
+    });
+    
+    console.log("File drop listeners set up successfully");
+  } catch (error) {
+    console.error("Failed to setup Tauri file drop:", error);
+    console.log("Falling back to web-based drag and drop only");
+  }
 }
 
 // Implement stageFiles function

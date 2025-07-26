@@ -7,12 +7,19 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@tauri-apps/api':
+        specifier: ^2.7.0
+        version: 2.7.0
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^2
         version: 2.7.1
 
 packages:
+
+  '@tauri-apps/api@2.7.0':
+    resolution: {integrity: sha512-v7fVE8jqBl8xJFOcBafDzXFc8FnicoH3j8o8DNNs0tHuEBmXUDqrCOAzMRX0UkfpwqZLqvrvK0GNQ45DfnoVDg==}
 
   '@tauri-apps/cli-darwin-arm64@2.7.1':
     resolution: {integrity: sha512-j2NXQN6+08G03xYiyKDKqbCV2Txt+hUKg0a8hYr92AmoCU8fgCjHyva/p16lGFGUG3P2Yu0xiNe1hXL9ZuRMzA==}
@@ -86,6 +93,8 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@tauri-apps/api@2.7.0': {}
 
   '@tauri-apps/cli-darwin-arm64@2.7.1':
     optional: true
