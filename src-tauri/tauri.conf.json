@@ -12,7 +12,8 @@
       {
         "title": "shelfsend",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "fileDropEnabled": true
       }
     ],
     "security": {
@@ -29,5 +30,11 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
-  }
+  },
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "core:path:default",
+    "fs:default"
+  ]
 }
