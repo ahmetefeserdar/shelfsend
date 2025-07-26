@@ -6,9 +6,6 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "fs:read-file",
-    "fs:read-meta",
-    "fs:write-file",
     "core:path:default"
   ]
 }
