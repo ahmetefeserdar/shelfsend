@@ -56,11 +56,10 @@ fn main() {
         .run(|app, event| match event {
             RunEvent::ExitRequested { .. } => {
                 // Clean up staged files on exit
-                let _ = app.get_state::<Staging>().map(|staging| {
-                    let mut g = staging.0.lock().unwrap();
-                    for p in g.iter() { let _=fs::remove_file(p);}  
-                    g.clear();
-                });
+                let staging = app.state::<Staging>();
+                let mut g = staging.0.lock().unwrap();
+                for p in g.iter() { let _=fs::remove_file(p);}  
+                g.clear();
             }
             _ => {}
         });
