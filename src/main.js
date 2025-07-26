@@ -100,11 +100,14 @@ async function stageFiles(paths) {
     const staged = await window.__TAURI__.core.invoke("stage_files", { paths });
     console.log("Staged files:", staged);
     
-    // For now, let's just display the filenames without trying to get file sizes
-    // to isolate any issues with the get_file_size command
-    const fileInfos = paths.map(path => {
-      const name = path.split(/[/\\]/).pop(); // Get filename from path
-      return { name, size: "Loading..." };
+    // Create file info objects with original names
+    const fileInfos = paths.map((path, index) => {
+      const name = path.split(/[/\\]/).pop(); // Get filename from original path
+      return { 
+        name, 
+        size: "Loading...", 
+        stagedPath: staged[index] // Use the staged file path for getting size
+      };
     });
 
     // Update the list with name
@@ -114,16 +117,19 @@ async function stageFiles(paths) {
         `<li>${info.name} (${info.size})</li>`
       ).join("");
       
-      // Now try to get file sizes asynchronously
-      for (let i = 0; i < paths.length; i++) {
+      // Now try to get file sizes from the staged files
+      for (let i = 0; i < fileInfos.length; i++) {
         try {
-          const stats = await window.__TAURI__.core.invoke("get_file_size", { path: paths[i] });
+          // Use the staged file path instead of original path
+          const stats = await window.__TAURI__.core.invoke("get_file_size", { 
+            path: fileInfos[i].stagedPath 
+          });
           fileInfos[i].size = humanSize(stats);
           list.innerHTML = fileInfos.map(info => 
             `<li>${info.name} (${info.size})</li>`
           ).join("");
         } catch (error) {
-          console.error("Failed to get file size for", paths[i], error);
+          console.error("Failed to get file size for", fileInfos[i].stagedPath, error);
           fileInfos[i].size = "Unknown";
           list.innerHTML = fileInfos.map(info => 
             `<li>${info.name} (${info.size})</li>`
